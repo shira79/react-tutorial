@@ -9,12 +9,12 @@ function Square({value, isHighlight, onSquareClick}){
     </button>
 }
 
-function Board({xIsNext, squares, onPlay, winner, winningSquares}) {
+function Board({xIsNext, squares, onPlay, isDraw, winner, winningSquares}) {
 
     function handleClick(i) {
         const nextSquares = squares.slice();
 
-        if (winner) {
+        if (winner || isDraw) {
             return;
         }
 
@@ -31,10 +31,12 @@ function Board({xIsNext, squares, onPlay, winner, winningSquares}) {
     }
 
     let status;
-    if (winner){
-        status = 'Winner: ' + winner;
+    if (winner) {
+        status = '勝者: ' + winner;
+    } else if(isDraw){
+        status = '引き分け';
     } else {
-        status = 'Next player: ' + (xIsNext ? 'X' : 'O');
+        status = '次のプレイヤーは: ' + (xIsNext ? 'X' : 'O');
     }
     
     return <>
@@ -63,6 +65,7 @@ export default function Game() {
     const currentSquares = history[history.length - 1]
     const xIsNext = (history.length % 2) !== 0
     const {winner, winningSquares} = calculateWinner(currentSquares);
+    const isDraw = currentSquares.every((square) => square !== null)
 
     function handlePlay(nextSquares){
         setHistory([...history, nextSquares])
@@ -97,6 +100,7 @@ export default function Game() {
                     squares={currentSquares}
                     onPlay={handlePlay}
                     winner={winner}
+                    isDraw={isDraw}
                     winningSquares={winningSquares}
                 />
             </div>
